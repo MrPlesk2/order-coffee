@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function setupRemoveButton(button, beverageElement) {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             beverageElement.remove();
             updateBeverageNumbers();
             updateRemoveButtons();
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    addButton.addEventListener('click', function() {
+    addButton.addEventListener('click', function () {
         const beverageCount = container.querySelectorAll('.beverage').length + 1;
         const newBeverage = container.firstElementChild.cloneNode(true);
 
@@ -76,11 +76,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const removeButton = newBeverage.querySelector('.remove-button');
         setupRemoveButton(removeButton, newBeverage);
 
+        const textarea = newBeverage.querySelector('.user-comment');
+        textarea.value = '';
+        setupTextareaHandler(textarea);
+        newBeverage.querySelector('.user-text-display').textContent = '';
+
         container.appendChild(newBeverage);
         updateRemoveButtons();
     });
 
-    orderForm.addEventListener('submit', function(e) {
+    orderForm.addEventListener('submit', function (e) {
         e.preventDefault();
         const beverages = container.querySelectorAll('.beverage');
         const count = beverages.length;
@@ -169,30 +174,3 @@ function setupTextareaHandler(textarea) {
 document.querySelectorAll('.user-comment').forEach(textarea => {
     setupTextareaHandler(textarea);
 });
-
-document.querySelector('.add-button').addEventListener('click', function () {
-    const beveragesContainer = document.getElementById('beverages-container');
-    const lastBeverage = beveragesContainer.lastElementChild.cloneNode(true);
-
-    const newIndex = beveragesContainer.children.length + 1;
-    lastBeverage.querySelector('.beverage-count').textContent = `Напиток №${newIndex}`;
-
-    lastBeverage.querySelectorAll('input[type="radio"]').forEach(radio => {
-        radio.name = `milk${newIndex}`;
-    });
-
-    lastBeverage.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-        checkbox.name = `options${newIndex}`;
-    });
-
-    const textarea = lastBeverage.querySelector('.user-comment');
-    textarea.value = '';
-    setupTextareaHandler(textarea);
-
-    const removeButton = lastBeverage.querySelector('.remove-button');
-    removeButton.disabled = false;
-    removeButton.addEventListener('click', () => lastBeverage.remove());
-
-    beveragesContainer.appendChild(lastBeverage);
-});
-
