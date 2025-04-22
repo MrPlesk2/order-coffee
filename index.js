@@ -6,12 +6,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const modalText = document.getElementById('modal-text');
     const modalClose = document.querySelector('.modal-close');
     const orderTableBody = document.getElementById('order-table-body');
+    const submitOrderBtn = document.querySelector('.submit-order-btn');
+    const orderTimeInput = document.getElementById('order-time');
 
     function getDrinkWord(count) {
         const lastTwo = count % 100;
         const lastOne = count % 10;
-        
-        if (lastTwo >= 11 && lastTwo <= 19) {   
+
+        if (lastTwo >= 11 && lastTwo <= 19) {
             return 'напитков';
         }
         if (lastOne === 1) {
@@ -90,6 +92,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const beverages = container.querySelectorAll('.beverage');
         const count = beverages.length;
         const word = getDrinkWord(count);
+        const now = new Date();
+        orderTimeInput.min = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 
         modalText.textContent = `Вы заказали ${count} ${word}`;
 
@@ -125,7 +129,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     modalClose.addEventListener('click', function () {
         modalOverlay.style.display = 'none';
+        modalOverlay.style.display = 'none';
+        orderTimeInput.value = '';
+        orderTimeInput.classList.remove('error');
     });
+
+    submitOrderBtn.addEventListener('click', function () {
+        const selectedTime = orderTimeInput.value;
+        const currentTime = new Date().toTimeString().slice(0, 5);
+
+        if (!selectedTime || selectedTime < currentTime) {
+            orderTimeInput.classList.add('error');
+            alert('Мы не умеем перемещаться во времени. Выберите время позже, чем текущее');
+            return;
+        }
+
+        orderTimeInput.classList.remove('error');
+        modalOverlay.style.display = 'none';
+
+        orderTimeInput.value = '';
+    });
+
 
     const firstBeverage = container.querySelector('.beverage');
     const firstRemoveButton = firstBeverage.querySelector('.remove-button');
@@ -166,3 +190,6 @@ function setupTextareaHandler(textarea) {
 document.querySelectorAll('.user-comment').forEach(textarea => {
     setupTextareaHandler(textarea);
 });
+
+
+
