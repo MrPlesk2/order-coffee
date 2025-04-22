@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return 'напитков';
     }
-    
+
     function updateRemoveButtons() {
         const removeButtons = container.querySelectorAll('.remove-button');
         removeButtons.forEach(button => {
@@ -58,28 +58,28 @@ document.addEventListener('DOMContentLoaded', function () {
     addButton.addEventListener('click', function() {
         const beverageCount = container.querySelectorAll('.beverage').length + 1;
         const newBeverage = container.firstElementChild.cloneNode(true);
-        
+
         newBeverage.querySelector('.beverage-count').textContent = `Напиток №${beverageCount}`;
-        
+
         const milkRadios = newBeverage.querySelectorAll('[name^="milk"]');
         milkRadios.forEach(radio => {
             radio.name = `milk${beverageCount}`;
             radio.checked = radio.value === "обычное";
         });
-        
+
         const optionsCheckboxes = newBeverage.querySelectorAll('[name^="options"]');
         optionsCheckboxes.forEach(checkbox => {
             checkbox.name = `options${beverageCount}`;
             checkbox.checked = false;
         });
-        
+
         const removeButton = newBeverage.querySelector('.remove-button');
         setupRemoveButton(removeButton, newBeverage);
-        
+
         container.appendChild(newBeverage);
         updateRemoveButtons();
     });
-    
+
     orderForm.addEventListener('submit', function(e) {
         e.preventDefault();
         const beverages = container.querySelectorAll('.beverage');
@@ -109,6 +109,11 @@ document.addEventListener('DOMContentLoaded', function () {
             optionsCell.textContent = selectedOptions;
             row.appendChild(optionsCell);
 
+            const commentCell = document.createElement('td');
+            const commentText = beverage.querySelector('.user-comment').value;
+            commentCell.textContent = commentText;
+            row.appendChild(commentCell);
+
             orderTableBody.appendChild(row);
         });
 
@@ -124,14 +129,13 @@ document.addEventListener('DOMContentLoaded', function () {
             modalOverlay.style.display = 'none';
         }
     });
-    
+
     const firstBeverage = container.querySelector('.beverage');
     const firstRemoveButton = firstBeverage.querySelector('.remove-button');
     setupRemoveButton(firstRemoveButton, firstBeverage);
     updateRemoveButtons();
 });
 
-// Функции для обработки текста
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
@@ -191,3 +195,4 @@ document.querySelector('.add-button').addEventListener('click', function () {
 
     beveragesContainer.appendChild(lastBeverage);
 });
+
