@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalOverlay = document.getElementById('modal-overlay');
     const modalText = document.getElementById('modal-text');
     const modalClose = document.querySelector('.modal-close');
+    const orderTableBody = document.getElementById('order-table-body');
     
     function getDrinkWord(count) {
         const lastTwo = count % 100;
@@ -22,33 +23,20 @@ document.addEventListener('DOMContentLoaded', function() {
         return 'напитков';
     }
     
-    addButton.addEventListener('click', function() {
-        const beverageCount = container.querySelectorAll('.beverage').length + 1;
-        const newBeverage = container.firstElementChild.cloneNode(true);
-        
-        newBeverage.querySelector('.beverage-count').textContent = `Напиток №${beverageCount}`;
-        
-        const milkRadios = newBeverage.querySelectorAll('[name^="milk"]');
-        milkRadios.forEach(radio => {
-            radio.name = `milk${beverageCount}`;
+    function updateRemoveButtons() {
+        const removeButtons = container.querySelectorAll('.remove-button');
+        removeButtons.forEach(button => {
+            button.disabled = removeButtons.length === 1;
         });
-        
-        const optionsCheckboxes = newBeverage.querySelectorAll('[name^="options"]');
-        optionsCheckboxes.forEach(checkbox => {
-            checkbox.name = `options${beverageCount}`;
-        });
-        
-        const removeButton = newBeverage.querySelector('.remove-button');
-        removeButton.disabled = false;
-        removeButton.addEventListener('click', function() {
-            newBeverage.remove();
+    }
+    
+    function setupRemoveButton(button, beverageElement) {
+        button.addEventListener('click', function() {
+            beverageElement.remove();
             updateBeverageNumbers();
             updateRemoveButtons();
         });
-        
-        container.appendChild(newBeverage);
-        updateRemoveButtons();
-    });
+    }
     
     function updateBeverageNumbers() {
         const beverages = container.querySelectorAll('.beverage');
@@ -67,18 +55,63 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    function updateRemoveButtons() {
-        const removeButtons = container.querySelectorAll('.remove-button');
-        removeButtons.forEach((button, index) => {
-            button.disabled = removeButtons.length === 1;
+    addButton.addEventListener('click', function() {
+        const beverageCount = container.querySelectorAll('.beverage').length + 1;
+        const newBeverage = container.firstElementChild.cloneNode(true);
+        
+        newBeverage.querySelector('.beverage-count').textContent = `Напиток №${beverageCount}`;
+        
+        const milkRadios = newBeverage.querySelectorAll('[name^="milk"]');
+        milkRadios.forEach(radio => {
+            radio.name = `milk${beverageCount}`;
+            radio.checked = radio.value === "обычное";
         });
-    }
+        
+        const optionsCheckboxes = newBeverage.querySelectorAll('[name^="options"]');
+        optionsCheckboxes.forEach(checkbox => {
+            checkbox.name = `options${beverageCount}`;
+            checkbox.checked = false;
+        });
+        
+        const removeButton = newBeverage.querySelector('.remove-button');
+        setupRemoveButton(removeButton, newBeverage);
+        
+        container.appendChild(newBeverage);
+        updateRemoveButtons();
+    });
     
     orderForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        const count = container.querySelectorAll('.beverage').length;
+        const beverages = container.querySelectorAll('.beverage');
+        const count = beverages.length;
         const word = getDrinkWord(count);
+        
         modalText.textContent = `Вы заказали ${count} ${word}`;
+        
+        orderTableBody.innerHTML = '';
+        
+        beverages.forEach(beverage => {
+            const row = document.createElement('tr');
+            
+            const drinkCell = document.createElement('td');
+            drinkCell.textContent = beverage.querySelector('.drink-type').value;
+            row.appendChild(drinkCell);
+            
+            const milkCell = document.createElement('td');
+            const selectedMilk = beverage.querySelector('[name^="milk"]:checked');
+            milkCell.textContent = selectedMilk ? selectedMilk.value : '';
+            row.appendChild(milkCell);
+            
+            const optionsCell = document.createElement('td');
+            const selectedOptions = Array.from(beverage.querySelectorAll('[name^="options"]:checked'))
+                .map(checkbox => checkbox.value)
+                .join(', ');
+            optionsCell.textContent = selectedOptions;
+            row.appendChild(optionsCell);
+            
+            orderTableBody.appendChild(row);
+        });
+        
         modalOverlay.style.display = 'flex';
     });
     
@@ -92,6 +125,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    const firstRemoveButton = container.querySelector('.remove-button');
-    firstRemoveButton.disabled = true;
+    const firstBeverage = container.querySelector('.beverage');
+    const firstRemoveButton = firstBeverage.querySelector('.remove-button');
+    setupRemoveButton(firstRemoveButton, firstBeverage);
+    updateRemoveButtons();
 });
