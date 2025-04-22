@@ -108,15 +108,13 @@ document.addEventListener('DOMContentLoaded', function () {
             row.appendChild(milkCell);
 
             const optionsCell = document.createElement('td');
-            const selectedOptions = Array.from(beverage.querySelectorAll('[name^="options"]:checked'))
+            optionsCell.textContent = Array.from(beverage.querySelectorAll('[name^="options"]:checked'))
                 .map(checkbox => checkbox.value)
                 .join(', ');
-            optionsCell.textContent = selectedOptions;
             row.appendChild(optionsCell);
 
             const commentCell = document.createElement('td');
-            const commentText = beverage.querySelector('.user-comment').value;
-            commentCell.textContent = commentText;
+            commentCell.textContent = beverage.querySelector('.user-comment').value;
             row.appendChild(commentCell);
 
             orderTableBody.appendChild(row);
