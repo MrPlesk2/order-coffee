@@ -10,8 +10,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function getDrinkWord(count) {
         const lastTwo = count % 100;
         const lastOne = count % 10;
-
-        if (lastTwo >= 11 && lastTwo <= 19) {
+        
+        if (lastTwo >= 11 && lastTwo <= 19) {   
             return 'напитков';
         }
         if (lastOne === 1) {
@@ -125,12 +125,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     modalClose.addEventListener('click', function () {
         modalOverlay.style.display = 'none';
-    });
-
-    modalOverlay.addEventListener('click', function (e) {
-        if (e.target === modalOverlay) {
-            modalOverlay.style.display = 'none';
-        }
     });
 
     const firstBeverage = container.querySelector('.beverage');
